@@ -1,3 +1,5 @@
 qiskit-machine-learning
-matplotlib
-pylatexenc
+
+networkx==3.2.1
+plotly==6.0.1
+dash==2.18.2

@@ -1,6 +1,9 @@
 # universal_burgary_alarm
 Uses state diagram and multiple personas based security alarm
 
+# how to install it
+pip install universal-burglary-alarm==0.2.0
+
 # Sample code to run it
 from universal_alarm import *
 

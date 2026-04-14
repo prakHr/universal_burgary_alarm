@@ -6,16 +6,10 @@ from qiskit import QuantumCircuit
 import random
     
 
-# -------------------------------
-# HELPER: theta → probability
-# -------------------------------
 def theta_to_prob(theta):
     return (np.sin(theta / 2)) ** 2
 
 
-# -------------------------------
-# SMART INTERPRETER (FIXED 🔥)
-# -------------------------------
 def interpret_gate(gate, qubits, labels, params, state):
     names = [labels[q] for q in qubits]
 
@@ -60,9 +54,6 @@ def interpret_gate(gate, qubits, labels, params, state):
     return f"{gate} on {names}"
 
 
-# -------------------------------
-# BUILD CIRCUIT
-# -------------------------------
 def universal_alarm(incident_dict, hearing_dict):
     if not check_probabilities_sum_to_one(hearing_dict):
         print("Invalid probabilities for hearing persons. Please fix them and try again.")
@@ -112,9 +103,6 @@ def universal_alarm(incident_dict, hearing_dict):
     return qc, labels
 
 
-# -------------------------------
-# BUILD GRAPH + EXPLANATIONS
-# -------------------------------
 def build_graph(qc, labels):
     G = nx.Graph()
     node_activity = {}
@@ -155,9 +143,6 @@ def build_graph(qc, labels):
     return G, node_activity, gate_index
 
 
-# -------------------------------
-# GRAPH VISUALIZATION
-# -------------------------------
 def build_figure(G, node_activity, labels, highlight=None):
     pos = nx.spring_layout(G, seed=42)
 
@@ -225,10 +210,11 @@ def build_figure(G, node_activity, labels, highlight=None):
     return fig
 
 
-# -------------------------------
-# DASH APP
-# -------------------------------
-def run_app(qc, labels):
+def get_app(qc, labels):
+    if len(labels) - 3 > 1000:
+        print("Too many hearing persons (limit is 1000).")
+        return False,False
+    
     G, node_activity, gate_index = build_graph(qc, labels)
 
     app = Dash(__name__)
@@ -265,16 +251,12 @@ def run_app(qc, labels):
         fig = build_figure(G, node_activity, labels, selected)
 
         return fig, text
-
-    app.run(debug=True)
+    return app,True
 
 
 def check_probabilities_sum_to_one(hearing_persons_dicts):
     if len(hearing_persons_dicts) == 0:
         print("No hearing persons provided.")
-        return False
-    if len(hearing_persons_dicts) > 1000:
-        print("Too many hearing persons (limit is 1000).")
         return False
     ok = True
     for person, probs in hearing_persons_dicts.items():
@@ -303,31 +285,48 @@ def check_probabilities_sum_to_one(hearing_persons_dicts):
     return ok
 
 
-# -------------------------------
-# MAIN
-# -------------------------------
-if __name__ == "__main__":
-    incident_dict = {
-        "Burglary": 0.001,
-        "Earthquake": 0.002,
-        "Alarm_nonBurglarynonEarthquake": 0.001,
-        "Alarm_BurglarynonEarthquake": 0.29,
-        "Alarm_nonBurglaryEarthquake": 0.94,
-        "Alarm_BurglaryEarthquake": 0.95
-    }
 
-    hearing_dict = {
-        "John": {"nonAlarm": 0.1, "Alarm": 0.9},
-        "Mary": {"nonAlarm": 0.2, "Alarm": 0.8},
-        "Alice": {"nonAlarm": 0.15, "Alarm": 0.85},
-        "Bob": {"nonAlarm": 0.25, "Alarm": 0.75},
-        "Eve": {"nonAlarm": 0.05, "Alarm": 0.95}
-    }
-    # For testing with 1000 random hearing persons, uncomment below:
-    # hearing_dict = {
-    #     f"person_{i}": {"nonAlarm": random.uniform(0.1, 0.3), "Alarm": random.uniform(0.8, 0.9)}
-    #     for i in range(1000)
-    # }
-    qc, labels = universal_alarm(incident_dict, hearing_dict)
+# from universal_alarm import *
 
-    run_app(qc, labels)
+# if __name__ == "__main__":
+#     incident_dict = {
+#         "Burglary": 0.001,
+#         "Earthquake": 0.002,
+#         "Alarm_nonBurglarynonEarthquake": 0.001,
+#         "Alarm_BurglarynonEarthquake": 0.29,
+#         "Alarm_nonBurglaryEarthquake": 0.94,
+#         "Alarm_BurglaryEarthquake": 0.95
+#     }
+
+#     hearing_dict = {
+#         "John": {"nonAlarm": 0.1, "Alarm": 0.9},
+#         "Mary": {"nonAlarm": 0.2, "Alarm": 0.8},
+#         "Alice": {"nonAlarm": 0.15, "Alarm": 0.85},
+#         "Bob": {"nonAlarm": 0.25, "Alarm": 0.75},
+#         "Eve": {"nonAlarm": 0.05, "Alarm": 0.95}
+#     }
+    
+#     qc, labels = universal_alarm(incident_dict, hearing_dict)
+#     app,check = get_app(qc, labels)
+#     if check == True:
+#         app.run_server(debug=True)
+
+#     hearing_dict = {
+#         f"person_{i}": {"nonAlarm": random.uniform(0.1, 0.3), "Alarm": random.uniform(0.8, 0.9)}
+#         for i in range(100)
+#     }
+#     qc, labels = universal_alarm(incident_dict, hearing_dict)
+#     app,check = get_app(qc, labels)
+#     if check == True:
+#         app.run_server(debug=True)
+
+#     hearing_dict = {
+#         f"person_{i}": {"nonAlarm": random.uniform(0.1, 0.3), "Alarm": random.uniform(0.8, 0.9)}
+#         for i in range(1000_000)
+#     }
+#     qc, labels = universal_alarm(incident_dict, hearing_dict)
+#     app,check = get_app(qc, labels)
+#     if check == True:
+#         app.run_server(debug=True)
+
+    

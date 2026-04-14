@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "universal-burglary-alarm"
+version = "0.2.0"
+description = "Universal Alarm for all kinds of people using state diagrams of Earthquakes and burglary"
+readme = "README.md"
+authors = [{ name="Prakhar Gandhi", email="gprakhar0@gmail.com" }]
+license = { text = "MIT" }
+dependencies = []
+requires-python = ">=3.10"
